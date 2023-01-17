@@ -24,6 +24,7 @@ export interface PageProps extends OneDayApiResponse {
 }
 
 const Home: NextPage<PageProps> = ({ date, warningTotal, graphDataList, hourGraphDataList }) => {
+  console.log(hourGraphDataList);
   return (
     <div className={Styles.home}>
       <Header />
@@ -31,8 +32,15 @@ const Home: NextPage<PageProps> = ({ date, warningTotal, graphDataList, hourGrap
         <WarningTotal date={date} warningTotal={warningTotal} />
       </div>
       <main className={Styles.home__main}>
-        <Graph graphDataList={graphDataList} text={'１分'} />
-        {hourGraphDataList && <Graph graphDataList={graphDataList} text={'１時間'} />}
+        <section>
+          <Graph graphDataList={graphDataList} text={'１分'} />
+        </section>
+
+        {hourGraphDataList && (
+          <section>
+            <Graph graphDataList={hourGraphDataList} text={'１時間'} />
+          </section>
+        )}
       </main>
     </div>
   );
@@ -42,7 +50,8 @@ export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const res = await axios.get<ApiResponse>('');
-  const apiResponse = res.data.data[res.data.data.length - 2];
+  const apiResponse = res.data.data.find((data) => data.date.toString() === '2023-1-12')!;
+  console.log(apiResponse);
   return {
     props: {
       ...apiResponse,
@@ -54,8 +63,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
 const getHourGraphDataList = (minuteGraphDataList: PageProps['graphDataList']): PageProps['graphDataList'] | false => {
   if (minuteGraphDataList.length < 60) return false;
 
-  const hourCount = minuteGraphDataList.length / 60;
-  const hourGraphDataList = new Array(hourCount).map<PageProps['graphDataList'][number]>((_, i) => {
+  const hourCount = Math.floor(minuteGraphDataList.length / 60);
+  const hourGraphDataList = [...new Array(hourCount)].map<PageProps['graphDataList'][number]>((_, i) => {
     return {
       blinkTotal:
         minuteGraphDataList.slice(i, hourCount * (i + 1)).reduce((prev, current) => prev + current.blinkTotal, 0) / 60,

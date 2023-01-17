@@ -11,7 +11,7 @@ interface Props extends Pick<PageProps, `graphDataList`> {
 
 export const Graph = ({ graphDataList, text }: Props) => {
   const humidityList = graphDataList.map((graphData) => Math.floor(graphData.humidity * 10) / 10);
-  const blinkTotalList = graphDataList.map((graphData) => graphData.blinkTotal);
+  const blinkTotalList = graphDataList.map((graphData) => Math.floor(graphData.blinkTotal));
 
   const options = useMemo(
     () => ({
@@ -34,6 +34,7 @@ export const Graph = ({ graphDataList, text }: Props) => {
     labels: humidityList,
     datasets: [
       {
+        borderWidth: text === '１分' ? 1 : 5,
         label: '瞬き回数',
         data: blinkTotalList,
         borderColor: 'rgb(53, 162, 235)',

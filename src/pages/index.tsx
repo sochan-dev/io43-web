@@ -38,7 +38,7 @@ const Home: NextPage<PageProps> = ({ date, warningTotal, graphDataList, hourGrap
 
         {hourGraphDataList && (
           <section>
-            <Graph graphDataList={hourGraphDataList} text={'１時間'} />
+            <Graph graphDataList={hourGraphDataList} text={'１時'} />
           </section>
         )}
       </main>
